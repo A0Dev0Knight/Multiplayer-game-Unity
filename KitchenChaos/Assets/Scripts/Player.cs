@@ -21,6 +21,39 @@ public class Player : MonoBehaviour
         float playerRadius = .7f;
         float playerHeight = 2f;
         bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, moveDistance);
+
+        if (!canMove)
+        {
+            // Cannot move to desired position
+
+            // Atempt moving on X axis
+            Vector3 moveDirX = new Vector3(moveDir.x, 0, 0);
+            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
+
+            if(canMove)
+            {
+                // Can move only on X
+                moveDir = moveDirX;
+            }
+            else
+            {
+                // Cannot move on X so we try moving on the Z axis
+
+                Vector3 moveDirZ = new Vector3(0, 0, moveDir.z);
+                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirZ, moveDistance);
+
+                if (canMove)
+                {
+                    // Can move only on Z
+                    moveDir = moveDirZ;
+                }
+                else
+                {
+                    // We cannot move on any direction!
+                }
+
+            }
+        }
         if (canMove)
         {
             transform.position += moveDir * moveDistance;
