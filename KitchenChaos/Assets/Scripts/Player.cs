@@ -10,7 +10,16 @@ public class Player : MonoBehaviour
     [SerializeField] private GameInput gameInput;
 
     private bool isWalking;
+    private Vector3 lastInteractDir;
+
     private void Update()
+    {
+        HandleMovement();
+        HandleInteractions();
+
+    }
+
+    private void HandleMovement()
     {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
 
@@ -30,7 +39,7 @@ public class Player : MonoBehaviour
             Vector3 moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
             canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
 
-            if(canMove)
+            if (canMove)
             {
                 // Can move only on X
                 moveDir = moveDirX;
@@ -58,14 +67,35 @@ public class Player : MonoBehaviour
         {
             transform.position += moveDir * moveDistance;
         }
-        
+
         isWalking = moveDir != Vector3.zero;
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
 
-      
-    }
 
+    }
+    
+    private void HandleInteractions()
+    {
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
+
+        if (moveDir != Vector3.zero)
+        {
+            lastInteractDir = moveDir;
+        }
+
+        float interactDistance = 2f;
+        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance)) 
+        {
+            Debug.Log(raycastHit.transform);
+        }
+        else
+        {
+            Debug.Log("---");
+        }
+    }
     public bool IsWalking()
     {
         return isWalking;
