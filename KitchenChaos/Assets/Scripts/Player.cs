@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     private bool isWalking;
     private Vector3 lastInteractDir;
+    private ClearCounter selectedCounter;
 
     private void Start()
     {
